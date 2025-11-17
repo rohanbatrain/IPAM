@@ -44,6 +44,3 @@ next-env.d.ts
 
 # bun
 bun.lock
-
-# lighthouse
-lighthouserc.json
