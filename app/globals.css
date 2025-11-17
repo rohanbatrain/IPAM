@@ -1,0 +1,320 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Grid pattern for backgrounds */
+.bg-grid-white\/5 {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+:root {
+  /* Theme colors - injected dynamically by theme system */
+  --background: 240 10% 98%;
+  --foreground: 240 10% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 10%;
+  --primary: 262 83% 58%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 6% 10%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
+  --accent: 262 83% 58%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --ring: 262 83% 58%;
+  --radius: 0.5rem;
+  
+  /* IPAM-specific colors */
+  --region-active: 142 76% 36%;
+  --region-reserved: 48 96% 53%;
+  --region-retired: 0 72% 51%;
+  --host-active: 142 76% 36%;
+  --host-released: 240 4% 46%;
+  --utilization-low: 142 76% 36%;
+  --utilization-medium: 48 96% 53%;
+  --utilization-high: 0 72% 51%;
+}
+
+.dark {
+  --background: 240 10% 10%;
+  --foreground: 240 10% 98%;
+  --card: 240 10% 13%;
+  --card-foreground: 240 10% 98%;
+  --popover: 240 10% 13%;
+  --popover-foreground: 240 10% 98%;
+  --primary: 262 83% 68%;
+  --primary-foreground: 240 10% 10%;
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 240 5% 96%;
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
+  --accent: 262 83% 68%;
+  --accent-foreground: 240 10% 10%;
+  --destructive: 0 72% 61%;
+  --destructive-foreground: 240 10% 10%;
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 262 83% 68%;
+  
+  --region-active: 142 76% 46%;
+  --region-reserved: 48 96% 63%;
+  --region-retired: 0 72% 61%;
+  --host-active: 142 76% 46%;
+  --host-released: 240 5% 65%;
+  --utilization-low: 142 76% 46%;
+  --utilization-medium: 48 96% 63%;
+  --utilization-high: 0 72% 61%;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===== Accessibility Enhancements ===== */
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Screen reader only content that becomes visible on focus */
+.sr-only:focus,
+.sr-only:active {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Focus visible styles for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Remove default focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Enhanced focus indicators for interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsl(var(--ring) / 0.2);
+}
+
+/* Skip link styles */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  * {
+    border-width: 2px;
+  }
+  
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Ensure sufficient color contrast for links */
+a {
+  text-decoration-skip-ink: auto;
+}
+
+a:not([class]) {
+  text-decoration-color: hsl(var(--primary));
+  text-underline-offset: 0.2em;
+}
+
+/* Improve readability for long-form content */
+article,
+.prose {
+  max-width: 65ch;
+}
+
+/* Ensure images are responsive and maintain aspect ratio */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Remove default button styles while maintaining accessibility */
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Ensure form elements are accessible */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Improve table accessibility */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  text-align: left;
+  font-weight: 600;
+}
+
+/* ARIA live region styles */
+[aria-live="polite"],
+[aria-live="assertive"] {
+  position: relative;
+}
+
+/* Visually hidden but accessible to screen readers */
+[aria-hidden="true"] {
+  pointer-events: none;
+}
+
+/* Ensure disabled elements are clearly indicated */
+[disabled],
+[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Focus trap for modals */
+.focus-trap {
+  position: relative;
+}
+
+/* Ensure tooltips are accessible */
+[role="tooltip"] {
+  position: absolute;
+  z-index: 1000;
+}
+
+/* Print styles for accessibility */
+@media print {
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+
+  abbr[title]::after {
+    content: " (" attr(title) ")";
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}

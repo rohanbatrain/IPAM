@@ -1,0 +1,79 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Build application
+        run: bun run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+      
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:3000
+            http://localhost:3000/login
+            http://localhost:3000/dashboard
+            http://localhost:3000/dashboard/countries
+            http://localhost:3000/dashboard/regions
+            http://localhost:3000/dashboard/hosts
+            http://localhost:3000/dashboard/analytics
+          configPath: './lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+      
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: .lighthouseci
+          retention-days: 30
+      
+      - name: Comment PR with results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('.lighthouseci/manifest.json', 'utf8'));
+            
+            let comment = '## 🔦 Lighthouse CI Results\n\n';
+            
+            results.forEach(result => {
+              const scores = result.summary;
+              comment += `### ${result.url}\n\n`;
+              comment += `| Category | Score |\n`;
+              comment += `|----------|-------|\n`;
+              comment += `| Performance | ${scores.performance * 100}% |\n`;
+              comment += `| Accessibility | ${scores.accessibility * 100}% |\n`;
+              comment += `| Best Practices | ${scores['best-practices'] * 100}% |\n`;
+              comment += `| SEO | ${scores.seo * 100}% |\n\n`;
+            });
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
