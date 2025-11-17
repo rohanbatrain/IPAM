@@ -587,7 +587,7 @@ copies or substantial portions of the Software.
 
 ### Special Thanks
 - **FastAPI Backend** - Robust API foundation
-- **PostgreSQL** - Reliable data storage
+- **Mongodb** - Reliable data storage
 - **OpenStreetMap** - Geographic data and mapping
 - **Three.js Community** - 3D visualization capabilities
 
