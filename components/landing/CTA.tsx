@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Network, Shield, Activity, Zap } from "lucide-react";
 import Link from "next/link";
+import GlobeDemo from "@/components/globe-demo";
 
 export default function CTA() {
     return (
@@ -14,6 +15,11 @@ export default function CTA() {
                 <p className="text-xl text-white/70 max-w-3xl mx-auto mb-12">
                     Join organizations worldwide using IPAM for intelligent, automated network infrastructure management.
                 </p>
+
+                {/* Globe Visualization */}
+                <div className="mb-12">
+                    <GlobeDemo />
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-12">
                     <div className="bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-white/10">

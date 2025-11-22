@@ -1,7 +1,6 @@
 "use client";
 
 import { Users, Shield } from "lucide-react";
-import GlobeDemo from "@/components/globe-demo";
 
 export default function Testimonials() {
     return (
@@ -14,11 +13,6 @@ export default function Testimonials() {
                     <p className="text-xl text-white/70 max-w-3xl mx-auto">
                         Hear from network administrators managing complex infrastructures
                     </p>
-                </div>
-
-                {/* Globe Visualization */}
-                <div className="mb-8">
-                    <GlobeDemo />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
