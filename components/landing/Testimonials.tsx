@@ -17,7 +17,7 @@ export default function Testimonials() {
                 </div>
 
                 {/* Globe Visualization */}
-                <div className="mb-16">
+                <div className="mb-8">
                     <GlobeDemo />
                 </div>
 
