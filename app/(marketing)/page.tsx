@@ -5,7 +5,7 @@ import Features from "@/components/landing/Features";
 import Testimonials from "@/components/landing/Testimonials";
 import CTA from "@/components/landing/CTA";
 import Header from "@/components/landing/Header";
-import Footer from "@/components/landing/Footer";
+import Footer from "@/components/landing/footer";
 
 export default function Home() {
     return (
