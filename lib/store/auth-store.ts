@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { login, signup } from '@/lib/api/auth';
+import { login as loginApi, signup as signupApi } from '@/lib/api/auth';
 import type { User, LoginCredentials, SignupCredentials, AuthError } from '@/lib/types/api';
 
 interface AuthState {
@@ -12,8 +12,8 @@ interface AuthState {
   error: AuthError | null;
 
   // Actions
-  login: (credentials: LoginCredentials) => Promise<void>;
-  signup: (credentials: SignupCredentials) => Promise<void>;
+  login: (credentials: LoginCredentials, apiUrl?: string) => Promise<void>;
+  signup: (credentials: SignupCredentials, apiUrl?: string) => Promise<void>;
   logout: () => void;
   refreshAccessToken: () => Promise<void>;
   hasPermission: (permission: string) => boolean;
@@ -44,12 +44,14 @@ export const useAuthStore = create<AuthState>()(
         set({ error });
       },
 
-      login: async (credentials) => {
+      login: async (credentials, apiUrl) => {
         try {
           set({ error: null }); // Clear any previous errors
-          const response = await login(credentials);
-          console.log('Login response:', { user: response.user, hasTokens: !!response.access_token });
-          
+          const response = await loginApi(credentials, apiUrl);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Login response:', { user: response.user, hasTokens: !!response.access_token });
+          }
+
           set({
             user: response.user,
             accessToken: response.access_token,
@@ -57,14 +59,16 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             error: null,
           });
-          
-          console.log('Auth state updated, isAuthenticated:', true);
+
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Auth state updated, isAuthenticated:', true);
+          }
         } catch (error) {
           console.error('Login failed in store:', {
-            error: (error as any)?.error,
-            message: (error as any)?.message,
-            code: (error as any)?.code,
-            status: (error as any)?.response?.status
+            error: (error as AuthError)?.error,
+            message: (error as AuthError)?.message,
+            code: (error as AuthError)?.code,
+            status: (error as unknown as { response?: { status?: number } })?.response?.status
           });
           const authError = error as AuthError;
           set({ error: authError });
@@ -72,12 +76,14 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      signup: async (credentials) => {
+      signup: async (credentials, apiUrl) => {
         try {
           set({ error: null }); // Clear any previous errors
-          const response = await signup(credentials);
-          console.log('Signup response:', { hasTokens: !!response.access_token, isVerified: response.is_verified });
-          
+          const response = await signupApi(credentials, apiUrl);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Signup response:', { hasTokens: !!response.access_token, isVerified: response.is_verified });
+          }
+
           set({
             user: null, // User will be set after email verification
             accessToken: response.access_token,
@@ -85,8 +91,10 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false, // Not fully authenticated until email verified
             error: null,
           });
-          
-          console.log('Auth state updated after signup, isAuthenticated:', false);
+
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Auth state updated after signup, isAuthenticated:', false);
+          }
         } catch (error) {
           console.error('Signup failed in store:', error);
           const authError = error as AuthError;
@@ -120,7 +128,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'ipam-auth',
+      name: 'sbd-auth',
       partialize: (state) => ({
         user: state.user,
         refreshToken: state.refreshToken,

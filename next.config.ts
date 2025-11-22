@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  
+
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -13,7 +13,10 @@ const nextConfig: NextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  
+
+  // Turbopack configuration (empty to silence warning)
+  turbopack: {},
+
   // Performance optimizations
   experimental: {
     optimizePackageImports: [
@@ -23,7 +26,7 @@ const nextConfig: NextConfig = {
       'date-fns',
     ],
   },
-  
+
   // Webpack optimizations for bundle splitting
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -111,10 +114,10 @@ const nextConfig: NextConfig = {
         },
       };
     }
-    
+
     return config;
   },
-  
+
   async headers() {
     return [
       {

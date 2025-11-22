@@ -4,17 +4,17 @@ export interface ApiError {
   success: false;
   error: string;
   message: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   code?: string; // Add error code for specific error types
 }
 
-export interface ApiSuccess<T = any> {
+export interface ApiSuccess<T = unknown> {
   success: true;
   data: T;
   message?: string;
 }
 
-export type ApiResponse<T = any> = ApiSuccess<T> | ApiError;
+export type ApiResponse<T = unknown> = ApiSuccess<T> | ApiError;
 
 // Auth-specific error types
 export enum AuthErrorCode {
@@ -81,4 +81,53 @@ export interface SignupResponse {
 export interface ResendVerificationResponse {
   success: boolean;
   message: string;
+}
+
+// Teams/Workspaces types
+export interface WorkspaceMember {
+  user_id: string;
+  username: string;
+  role: string;
+  joined_at: string;
+}
+
+export interface WorkspaceSettings {
+  [key: string]: unknown;
+}
+
+export interface WorkspaceResponse {
+  workspace_id: string;
+  name: string;
+  description?: string;
+  owner_id: string;
+  members: WorkspaceMember[];
+  settings: WorkspaceSettings;
+  created_at: string;
+  updated_at: string;
+  wallet_initialized?: boolean;
+}
+
+// Families types
+export interface FamilyMember {
+  user_id: string;
+  username: string;
+  role: string;
+  joined_at: string;
+}
+
+export interface FamilySettings {
+  [key: string]: unknown;
+}
+
+export interface FamilyResponse {
+  family_id: string;
+  name: string;
+  description?: string;
+  admin_user_ids: string[];
+  members: FamilyMember[];
+  settings: FamilySettings;
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
+  member_count: number;
 }

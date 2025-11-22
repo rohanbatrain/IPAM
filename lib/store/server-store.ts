@@ -9,20 +9,21 @@ interface ServerConfig {
 interface ServerStore extends ServerConfig {
   setServerUrl: (url: string) => void;
   resetServer: () => void;
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 }
 
 const defaultServerUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export const useServerStore = create<ServerStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       serverUrl: defaultServerUrl,
       isConfigured: false,
       // Hydration flag to indicate persisted state has been loaded
       _hasHydrated: false,
 
       setHasHydrated: (state: boolean) => {
-        // @ts-ignore - update internal flag
         set({ _hasHydrated: state });
       },
 
@@ -42,24 +43,19 @@ export const useServerStore = create<ServerStore>()(
       },
     }),
     {
-      name: 'ipam-server-config',
+      name: 'sbd-server-config',
       // Only persist serverUrl and isConfigured
       partialize: (state) => ({
         serverUrl: state.serverUrl,
         isConfigured: state.isConfigured,
       }),
       onRehydrateStorage: () => (state) => {
-        // After rehydration completes, update the store so components know
-        // persisted values are available. Use the `set` from the outer scope.
-        try {
-          // @ts-ignore - call set from closure
-          set({ _hasHydrated: true });
-        } catch (e) {
-          // If set isn't available for some reason, fall back to mutating
-          if (state) {
-            // eslint-disable-next-line no-param-reassign
-            (state as any)._hasHydrated = true;
-          }
+        // After rehydration completes, mark persisted state as hydrated.
+        // We cannot rely on the `set` closure here in the options object,
+        // so mutate the rehydrated state directly when available.
+        if (state) {
+          // eslint-disable-next-line no-param-reassign
+          (state as unknown as { _hasHydrated: boolean })._hasHydrated = true;
         }
       },
     }
